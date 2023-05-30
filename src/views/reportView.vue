@@ -6,34 +6,45 @@
       <div class="week-report">
         <span> <img src="@/assets/icons/arrow.png" alt="" /> </span>
         <div class="emotion-box" v-for="(val, index) in trackData" :key="index">
-          <lottie-vue-player
-            class="lottie"
-            :src="emotionToAnimation(maxEmotion(val))"
-            :player-controls="false"
-            style="width: 100%; height: 200px"
-            :autoplay="true"
-            :loop="false"
-          >
-          </lottie-vue-player>
+          <div class="lottie">
+            <lottie-vue-player
+              :src="emotionToAnimation(maxEmotion(val))"
+              :player-controls="false"
+              style="width: 100%; height: 200px"
+              :autoplay="true"
+              :loop="false"
+            >
+            </lottie-vue-player>
+            <h6 style="text-align: center">
+              {{ maxEmotion(val) }} on {{ formatDate(val) }}
+            </h6>
+          </div>
           <div class="vals">
             <h6 class="vals-h6">Stats for the day</h6>
             <div>
               <k-progress
-                :percent="Number(val.happy) * 10"
+                :percent="Number(val.neutral)"
+                status="warning"
+                active
+                :line-height="12"
+                :format="() => 'Neutral'"
+              ></k-progress>
+              <k-progress
+                :percent="Number(val.happy)"
                 status="success"
                 active
                 :line-height="12"
                 :format="() => 'Happy'"
               ></k-progress>
               <k-progress
-                :percent="Number(val.anxious) * 10"
+                :percent="Number(val.anxious)"
                 active
                 :line-height="12"
                 :format="() => 'Anxious'"
               ></k-progress>
               <k-progress
-                :percent="Number(val.angry) * 10"
-                status="danger"
+                :percent="Number(val.angry)"
+                status="error"
                 active
                 :line-height="12"
                 :format="() => 'Angry'"
@@ -125,7 +136,7 @@ main {
         .vals {
           display: grid;
           grid-template-rows: 2fr 2fr;
-          height: 220px;
+          height: 180px;
 
           padding: 10px;
 
@@ -143,19 +154,21 @@ export default {
   data() {
     return {
       trackData: [
-        { happy: 5, angry: 7, anxious: 7 },
-        { happy: 2, angry: 2, anxious: 6 },
-        { happy: 3, angry: 6, anxious: 2 },
-        { happy: 6, angry: 4, anxious: 8 },
-        { happy: 9, angry: 0, anxious: 7 },
-        { happy: 0, angry: 1, anxious: 7 },
-        { happy: 5, angry: 2, anxious: 5 },
+        { happy: 50, angry: 70, anxious: 70, neutral: 20, stamp: new Date() },
+        { happy: 20, angry: 20, anxious: 60, neutral: 80, stamp: new Date() },
+        { happy: 30, angry: 60, anxious: 20, neutral: 40, stamp: new Date() },
+        { happy: 60, angry: 40, anxious: 80, neutral: 80, stamp: new Date() },
+        { happy: 90, angry: 0, anxious: 70, neutral: 10, stamp: new Date() },
+        { happy: 0, angry: 10, anxious: 70, neutral: 10, stamp: new Date() },
+        { happy: 50, angry: 20, anxious: 50, neutral: 50, stamp: new Date() },
       ],
     };
   },
   methods: {
     maxEmotion(input) {
-      let max = Math.max(...Object.values(input));
+      let keys = Object.values(input);
+      keys.pop();
+      let max = Math.max(...keys);
       return Object.keys(input).filter((el) => input[el] === max)[0];
     },
     emotionToAnimation(emotion) {
@@ -166,7 +179,13 @@ export default {
           return "https://assets4.lottiefiles.com/packages/lf20_SkHItGfvka.json";
         case "anxious":
           return "https://assets10.lottiefiles.com/private_files/lf30_qpfajs7r.json";
+        case "neutral":
+          return "https://assets8.lottiefiles.com/packages/lf20_ilpffean.json";
       }
+    },
+    formatDate(val) {
+      let date = val.stamp;
+      return `${date.getDate()}/${date.getMonth()}/${date.getYear()}`;
     },
   },
 };

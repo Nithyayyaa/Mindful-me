@@ -26,7 +26,7 @@
         <p>Want to keep a track of your mood?</p>
         <div class="buttons">
           <button @click="active = !active">track</button>
-          <button @click="this.$router.push('/view')">View</button>
+          <button @click="$router.push('/view')">View</button>
         </div>
       </div>
       <div class="read">
@@ -45,7 +45,7 @@
 
       <div class="con-content">
         <div class="modal1-content">
-          <div class="modal1-option">
+          <div @click="clickPicture" class="modal1-option">
             <lottie-vue-player
               class="lottie"
               src="https://assets9.lottiefiles.com/packages/lf20_0zv8teye.json"
@@ -70,10 +70,73 @@
         </div>
       </div>
     </vs-dialog>
+    <vs-dialog overflow-hidden v-model="image">
+      <template #header>
+        <h3 style="font-family: 'PoetsenOne'">
+          Please wait while we click a picture
+        </h3>
+      </template>
+      <div
+        class="con-content"
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-family: 'Podkova', serif;
+        "
+        v-if="emotionData === null"
+      >
+        <video id="video" autoplay width="320" height="240" ref="video"></video>
+        <canvas style="display: none" ref="canvas" />
+      </div>
+      <div style="width: 500px" v-else>
+        <vs-alert relief>
+          <template #title> Automatic Emotion detection </template>
+          This information is auto detected and may not be 100% correct.
+          <br />
+          <b
+            >If most on the values below are low that imply we detect the day as
+            neutral</b
+          >
+        </vs-alert>
+        <br /><br />
+        <h3>Result</h3>
+        <k-progress
+          :percent="Number(emotionData.neutral)"
+          status="warning"
+          active
+          :line-height="12"
+          :format="() => 'Neutral'"
+        ></k-progress>
+        <k-progress
+          :percent="Number(emotionData.happy)"
+          status="success"
+          active
+          :line-height="12"
+          :format="() => 'Happy'"
+        ></k-progress>
+        <k-progress
+          :percent="Number(emotionData.anxious)"
+          active
+          :line-height="12"
+          :format="() => 'Anxious'"
+        ></k-progress>
+        <k-progress
+          :percent="Number(emotionData.angry)"
+          status="error"
+          active
+          :line-height="12"
+          :format="() => 'Angry'"
+        ></k-progress>
+      </div>
+    </vs-dialog>
   </div>
 </template>
 
 <style scoped lang="scss">
+* {
+  font-family: "Podkova", serif;
+}
 .home {
   height: 100vh;
   width: 100vw;
@@ -238,16 +301,62 @@
 </style>
 
 <script>
+import axios from "axios";
+import { db } from "@/firebaseConfig";
+import { updateDoc, doc, arrayUnion } from "firebase/firestore";
+
 export default {
   name: "HomeView",
   data() {
     return {
       active: false,
+      image: false,
+      srcObject: null,
+      emotionData: null,
     };
   },
   computed: {
     user() {
       return this.$store.state.user;
+    },
+  },
+  methods: {
+    async clickPicture() {
+      this.active = !this.active;
+      this.image = true;
+      let stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      });
+      this.$refs.video.srcObject = stream;
+      setTimeout(() => {
+        const canvas = this.$refs.canvas;
+        canvas
+          .getContext("2d")
+          .drawImage(this.$refs.video, 0, 0, canvas.width, canvas.height);
+        let image_data_url = canvas.toDataURL("image/jpeg");
+        axios
+          .post("http://127.0.0.1:5000/image", { data_url: image_data_url })
+          .then(async (resp) => {
+            console.log(resp);
+            this.emotionData = {
+              happy: resp.data[0].emotion.happy,
+              angry: resp.data[0].emotion.angry,
+              anxious: resp.data[0].emotion.fear,
+              neutral: resp.data[0].emotion.neutral,
+            };
+            const docRef = doc(db, "users", this.$store.state.user.uid);
+            await updateDoc(docRef, {
+              moods: arrayUnion({
+                ...this.emotionData,
+                stamp: new Date(),
+              }),
+            });
+          });
+        stream.getTracks().forEach(function (track) {
+          track.stop();
+        });
+      }, 3000);
     },
   },
 };

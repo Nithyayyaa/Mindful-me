@@ -18,6 +18,7 @@ export default {
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
+        uid: user.uid,
       });
     });
   },

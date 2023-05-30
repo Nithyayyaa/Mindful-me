@@ -326,7 +326,7 @@ export default {
           const userData = await getDoc(userDoc);
           if (!userData.exists()) {
             console.log("hi");
-            await setDoc(userDoc, {});
+            await setDoc(userDoc, { moods: [] });
           }
           await this.$store.dispatch("login", this.user);
           this.$router.push("/home");
