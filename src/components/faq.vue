@@ -48,7 +48,8 @@ div {
   }
 
   p {
-    color: rgb(176, 176, 176);
+    margin-top: 10px;
+    color: rgb(107, 96, 96);
     font-family: sans-serif;
   }
 }
