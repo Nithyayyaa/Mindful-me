@@ -12,7 +12,7 @@
           <span>FAQ's</span>
         </div>
         <div class="right">
-          <span v-if="!user" @click="login">Login</span>
+          <span v-if="!user">Login</span>
           <span v-else>Hey, {{ user.displayName }}</span>
         </div>
       </div>
@@ -137,7 +137,7 @@
       </div>
     </vs-dialog>
     <vs-dialog overflow-hidden v-model="questionnaire">
-      <QuestionnaireComponent />
+      <QuestionnaireComponent @close="questionnaire = false" />
     </vs-dialog>
   </div>
 </template>

@@ -4,7 +4,9 @@
       <h3>Week</h3>
       <h6>7th May - 14th May</h6>
       <div class="week-report">
-        <span> <img src="@/assets/icons/arrow.png" alt="" /> </span>
+        <span>
+          <img src="@/assets/icons/arrow.png" alt="" @click="prevWeek()" />
+        </span>
         <div class="emotion-box" v-for="(val, index) in trackData" :key="index">
           <div class="lottie">
             <lottie-vue-player
@@ -57,8 +59,45 @@
             src="@/assets/icons/arrow.png"
             alt=""
             style="transform: rotateZ(180deg)"
+            @click="nextWeek()"
           />
         </span>
+      </div>
+      <div class="average-report">
+        <lottie-vue-player
+          :src="emotionToAnimation(getAvgMoodLottie)"
+          :player-controls="false"
+          style="width: 100%; height: 200px"
+          :autoplay="true"
+          :loop="false"
+        />
+        <k-progress
+          :percent="getAvgMoodNeutral"
+          status="warning"
+          active
+          :line-height="12"
+          :format="() => 'Neutral'"
+        ></k-progress>
+        <k-progress
+          :percent="getAvgMoodHappy"
+          status="success"
+          active
+          :line-height="12"
+          :format="() => 'Happy'"
+        ></k-progress>
+        <k-progress
+          :percent="getAvgMoodAnxious"
+          active
+          :line-height="12"
+          :format="() => 'Anxious'"
+        ></k-progress>
+        <k-progress
+          :percent="getAvgMoodAngry"
+          status="error"
+          active
+          :line-height="12"
+          :format="() => 'Angry'"
+        ></k-progress>
       </div>
     </div>
   </main>
@@ -93,9 +132,9 @@ main {
     }
 
     .week-report {
-      display: grid;
-      grid-template-columns: 1fr repeat(7, 2fr) 1fr;
-      gap: 1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       border: 2px solid #f96969;
       border-radius: 20px;
       place-items: center;
@@ -105,8 +144,9 @@ main {
       span {
         background-color: #f96969;
         border-radius: 100%;
-        height: 70px;
-        width: 70px;
+        // height: 70px;
+        // width: 70px;
+        padding: 20px;
 
         display: flex;
         justify-content: center;
@@ -146,6 +186,18 @@ main {
         }
       }
     }
+    .average-report {
+      max-width: 35%;
+      margin-top: 20px;
+      // display: flex;
+      // align-items: center;
+      // flex-direction: column;
+      // justify-content: space-between;
+      border: 2px solid #f96969;
+      border-radius: 20px;
+
+      padding: 20px;
+    }
   }
 }
 </style>
@@ -158,6 +210,8 @@ export default {
     return {
       userData: null,
       trackData: [],
+      weekData: [],
+      weekIndex: 0,
     };
   },
   beforeMount() {
@@ -165,6 +219,8 @@ export default {
     getDoc(docRef).then((userData) => {
       this.userData = userData.data();
       this.trackData = userData.data().moods;
+      this.weekIndex = Math.max(this.trackData.length - 7, 0);
+      this.getWeekData();
     });
   },
   methods: {
@@ -196,8 +252,65 @@ export default {
       }
     },
     formatDate(val) {
-      let date = new Date(val.stamp.m);
+      let date = new Date(
+        val.stamp.seconds * 1000 + val.stamp.nanoseconds / 1000000
+      );
       return `${date.getDate()}/${date.getMonth()}/${date.getYear()}`;
+    },
+    nextWeek() {
+      this.weekIndex = Math.min(this.weekIndex + 7, this.trackData.length - 7);
+      this.getWeekData();
+    },
+    prevWeek() {
+      this.weekIndex = Math.max(this.weekIndex - 7, 0);
+      this.getWeekData();
+    },
+    getWeekData() {
+      this.weekData = this.trackData.slice(
+        this.weekIndex,
+        (this.weekIndex + 7) % 7
+      );
+    },
+  },
+  computed: {
+    getAvgMoodLottie() {
+      let emotion = "";
+      let max = Math.max(
+        this.getAvgMoodNeutral,
+        this.getAvgMoodHappy,
+        this.getAvgMoodAnxious,
+        this.getAvgMoodAngry
+      );
+      if (max === this.getAvgMoodAngry) emotion = "angry";
+      else if (max === this.getAvgMoodAnxious) emotion = "anxious";
+      else if (max === this.getAvgMoodHappy) emotion = "happy";
+      else if (max === this.getAvgMoodNeutral) emotion = "neutral";
+      console.log(emotion);
+      return this.emotionToAnimation(emotion);
+    },
+    getAvgMoodNeutral() {
+      let neutral = this.trackData.reduce((prev, curr) => {
+        return prev + Number(curr.neutral);
+      }, 0);
+      return neutral / this.trackData.length;
+    },
+    getAvgMoodHappy() {
+      let happy = this.trackData.reduce((prev, curr) => {
+        return prev + Number(curr.happy);
+      }, 0);
+      return happy / this.trackData.length;
+    },
+    getAvgMoodAnxious() {
+      let anxious = this.trackData.reduce((prev, curr) => {
+        return prev + Number(curr.anxious);
+      }, 0);
+      return anxious / this.trackData.length;
+    },
+    getAvgMoodAngry() {
+      let angry = this.trackData.reduce((prev, curr) => {
+        return prev + Number(curr.angry);
+      }, 0);
+      return angry / this.trackData.length;
     },
   },
 };

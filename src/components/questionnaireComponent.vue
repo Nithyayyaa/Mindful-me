@@ -22,7 +22,7 @@ export default {
   mounted() {
     this.rating_pick = 5;
   },
-  methods: {
+  computed: {
     getString() {
       switch (this.activeTab) {
         case 0:
@@ -31,8 +31,12 @@ export default {
           return "https://assets4.lottiefiles.com/packages/lf20_SkHItGfvka.json";
         case 2:
           return "https://assets10.lottiefiles.com/private_files/lf30_qpfajs7r.json";
+        default:
+          return "https://assets1.lottiefiles.com/packages/lf20_cehxtohr.json";
       }
     },
+  },
+  methods: {
     async handleInput() {
       switch (this.activeTab) {
         case 0:
@@ -51,9 +55,10 @@ export default {
         const docRef = doc(db, "users", this.$store.state.user.uid);
         const dbResp = await getDoc(docRef);
         const dbData = dbResp.data();
-        const lastDate = new Date(dbData.moods.at(-1).stamp.n);
-        console.log(dbData.moods.at(-1).stamp);
-        console.log(typeof dbData.moods.at(-1).stamp);
+        const lastDate = new Date(
+          dbData.moods.at(-1).stamp.seconds * 1000 +
+            dbData.moods.at(-1).stamp.nanoseconds / 1000000
+        );
         if (lastDate.getDate() === new Date().getDate()) {
           let moods = dbData.moods;
           moods.pop();
@@ -74,6 +79,7 @@ export default {
             }),
           });
         }
+        this.$emit("close");
       }
     },
   },
@@ -84,13 +90,31 @@ export default {
   <section class="rating">
     <div class="logo">
       <lottie-vue-player
-        :src="getString()"
+        src="https://assets8.lottiefiles.com/packages/lf20_ilpffean.json"
         :player-controls="false"
         style="display: block; width: 100%; height: 200px"
         :autoplay="true"
         :loop="true"
       >
       </lottie-vue-player>
+      <!-- <lottie-vue-player
+        v-else-if="activeTab === 1"
+        src="https://assets4.lottiefiles.com/packages/lf20_SkHItGfvka.json"
+        :player-controls="false"
+        style="display: block; width: 100%; height: 200px"
+        :autoplay="true"
+        :loop="true"
+      >
+      </lottie-vue-player>
+      <lottie-vue-player
+        v-else
+        src="https://assets10.lottiefiles.com/private_files/lf30_qpfajs7r.json"
+        :player-controls="false"
+        style="display: block; width: 100%; height: 200px"
+        :autoplay="true"
+        :loop="true"
+      >
+      </lottie-vue-player> -->
     </div>
     <div class="intro">
       <p>
@@ -99,7 +123,7 @@ export default {
       </p>
     </div>
 
-    <form name="select-rating" class="select-rating" @submit="onsubmit">
+    <form name="select-rating" class="select-rating">
       <fieldset>
         <div
           v-for="formGroup in formGroups"
