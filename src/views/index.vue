@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Navbar />
     <section class="hero">
       <div class="left">
         <h1>MINDFUL ME</h1>
@@ -15,46 +16,52 @@
         <img src="../assets/images/hero-2.png" alt="landing" />
       </div>
       <div class="left">
-        <h1>Why Us?</h1>
+        <h1 id="whyus">Why Us?</h1>
         <h6>
-          The only application out there that let’s you track your mood and
-          connect with mental health professionals out there!
+          Welcome to our all-in-one mental wellness hub! Our web app combines
+          the power of mood tracking, a treasure trove of articles and
+          newsletters, and seamless connections with trusted mental health
+          professionals. Track your moods, gain valuable insights, and discover
+          expert guidance to enhance your well-being. Uncover the tools you need
+          to nurture your mind, all in one convenient place."
         </h6>
       </div>
     </section>
     <section class="services">
-      <h6>Services</h6>
+      <h6 id="services">Services</h6>
       <h2>Check out the great services we offer</h2>
       <hr />
       <div class="services-grid">
         <div class="service">
           <img src="" alt="" />
-          <h6>mood tracker</h6>
+          <h6>Mood Tracker</h6>
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex,
-            distinctio?
+            The mood tracking feature allows you to regularly record and monitor
+            your emotions, providing insights into your mental well-being over
+            time.
           </p>
         </div>
         <div class="service">
           <img src="" alt="" />
-          <h6>articles and newsletter</h6>
+          <h6>Articles and Newsletter</h6>
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex,
-            distinctio?
+            The app provides a dedicated section where you can access a wide
+            range of articles, blogs, and newsletters related to mental health.
           </p>
         </div>
         <div class="service">
           <img src="" alt="" />
-          <h6>connect with professionals</h6>
+          <h6>Connect with Professionals</h6>
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex,
-            distinctio?
+            The web app offers a platform for you to connect with licensed
+            mental health professionals.You can Browse through a directory of
+            professionals and connect with them.
           </p>
         </div>
       </div>
     </section>
     <section class="faq">
-      <h6>F.A.Q.</h6>
+      <h6 id="faq">F.A.Q.</h6>
       <h2>Frequently Asked Questions</h2>
       <hr />
       <FAQ
@@ -65,7 +72,7 @@
       />
     </section>
     <section class="contact">
-      <h6>Contact</h6>
+      <h6 id="contact">Contact Us</h6>
       <h2>Get in touch with us</h2>
       <hr />
       <div>
@@ -153,17 +160,20 @@
     padding-left: 100px;
     h1 {
       font-family: "Podkova";
-      font-weight: 700;
-      font-size: 80px;
+      font-weight: 800;
+      font-size: 60px;
+      color: #000;
       line-height: 89px;
       text-align: center;
     }
     h6 {
       font-family: "Podkova";
-      font-weight: 700;
-      font-size: 25px;
-      line-height: 44px;
-      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 200;
+      color: #000;
+      font-size: 20px;
+      line-height: 30px;
+      text-align: justify;
     }
 
     button {
@@ -178,7 +188,8 @@
   }
 
   &.hero-2 {
-    background: white;
+    background: whitesmoke;
+    color: black;
     .left {
       padding-left: 0;
       align-items: center;
@@ -213,7 +224,7 @@
         text-transform: capitalize;
         font-family: "Podkova";
         font-weight: 700;
-        font-size: 20px;
+        font-size: 21px;
         line-height: 29px;
         text-align: center;
         color: #f96969;
@@ -222,8 +233,11 @@
 
       p {
         font-family: "Podkova";
-        font-size: 15px;
-        text-align: center;
+        font-size: 17px;
+        margin-left: 10px;
+        font-weight: 400;
+        margin-right: 10px;
+        text-align: justify;
         color: #656565;
       }
 
@@ -237,6 +251,7 @@
 .faq {
   @include section;
   padding: 25px;
+  font-size: 1.1em;
 }
 
 .contact {
@@ -274,26 +289,35 @@
 }
 </style>
 <script>
+import Navbar from "@/components/navbar.vue";
 const faqs = [
   {
     question: "What is Mindful Me?",
-    answer: "Mindful Me is a one stop shop for your mental health needs.",
+    answer:
+      "Mindful Me aims to provide a comprehensive platform for users to track their mood, connect with mental health professionals, and access valuable resources such as blogs and newsletters. It's designed to support mental well-being and offer tools for self-reflection and professional guidance.",
   },
   {
-    question: "What is Mindful Me?",
-    answer: "Mindful Me is a one stop shop for your mental health needs.",
+    question: "How does the mood tracking feature work?",
+    answer:
+      "The mood tracking feature allows users to regularly record and monitor their emotions, providing insights into their mental well-being over time. Users can rate their mood on a scale or choose from predefined categories, add notes, and track patterns or trends. The app may also offer visualizations and analytics to help users better understand their mood fluctuations.",
   },
   {
-    question: "What is Mindful Me?",
-    answer: "Mindful Me is a one stop shop for your mental health needs.",
+    question:
+      "Can I connect with mental health professionals through this web app?",
+    answer:
+      "Yes, our web app provides a platform for users to connect with licensed mental health professionals. You can browse through a directory of professionals, read their profiles, and choose someone who matches your needs. The app may offer options for scheduling appointments or conducting virtual sessions, depending on the availability of the professionals.",
   },
   {
-    question: "What is Mindful Me?",
-    answer: "Mindful Me is a one stop shop for your mental health needs.",
+    question:
+      "Are the mental health professionals on the platform qualified and certified?",
+    answer:
+      "We strive to ensure that all mental health professionals listed on our platform are qualified, certified, and licensed to practice in their respective fields. However, it's essential for users to conduct their own due diligence when selecting a professional and verify their credentials before engaging in any services.",
   },
   {
-    question: "What is Mindful Me?",
-    answer: "Mindful Me is a one stop shop for your mental health needs.",
+    question:
+      "Can I read blogs and newsletters related to mental health on this web app?",
+    answer:
+      "Absolutely! Our web app provides a dedicated section where users can access blogs, articles, and newsletters covering a wide range of mental health topics. These resources are curated by professionals and experts to provide valuable insights, tips, and advice for maintaining mental well-being.",
   },
 ];
 
@@ -311,6 +335,7 @@ export default {
   },
   components: {
     FAQ,
+    Navbar,
   },
   methods: {
     async login() {

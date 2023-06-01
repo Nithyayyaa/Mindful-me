@@ -28,18 +28,20 @@
       <div class="info">
         <img :src="this.doctor.picture.large" alt="doctor ki sakal" />
         <div style="text-align: left">
-          <span style="font-size: 30px">
+          <span
+            style="font-size: 20px; font-family: 'Podkova'; font-weight: 800"
+          >
             {{
               ["Dr.", this.doctor.name.first, this.doctor.name.last].join(" ")
             }}
           </span>
-          <p style="font-family: 'Podkova'; margin-top: 20px">
+          <p style="font-family: 'Podkova'; margin-top: 5px">
             <span>{{ this.doctor.email }}</span>
             <br />
             <span>{{ this.doctor.phone }}</span>
           </p>
         </div>
-        <div style="text-align: left; margin-left: 40px">
+        <div style="text-align: left; margin-left: 10px">
           <p style="font-family: 'Podkova'">
             <span
               >{{ this.doctor.location.street.number }},{{
@@ -59,7 +61,7 @@
           </p>
         </div>
       </div>
-      <GmapMap :center="center" :zoom="5" style="width: 100%; height: 340px">
+      <GmapMap :center="center" :zoom="5" style="width: 100%; height: 320px">
         <GmapMarker
           :key="index"
           v-for="(m, index) in markers"
@@ -101,8 +103,8 @@ main {
     span {
       font-family: "Podkova";
       font-style: normal;
-      font-weight: 700;
-      font-size: 30px;
+      font-weight: 400;
+      font-size: 25px;
       text-align: center;
 
       color: #000000;
@@ -119,11 +121,11 @@ main {
     background: #ffb6b6;
     border: 4px solid #000000;
 
-    padding: 2em;
+    padding: 1em;
 
     & > h2 {
-      font-family: "PoetsenOne";
-      font-size: 1.75em;
+      font-family: "Podkova";
+      font-size: 1.6em;
       text-align: center;
       text-align: left;
     }
@@ -149,13 +151,13 @@ main {
     border: 4px solid #000000;
 
     padding: 2em;
-
     display: flex;
     justify-content: center;
     align-items: center;
 
-    font-family: "PoetsenOne";
+    font-family: "Podkova";
     font-size: 20px;
+    font-weight: 500;
     text-align: center;
   }
 
@@ -164,22 +166,28 @@ main {
     background: #8ee5c2;
     border: 4px solid #000000;
 
-    padding: 2em;
+    padding: 1em;
 
-    font-family: "PoetsenOne";
-    font-size: 20px;
+    font-family: "Podkova";
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 10px;
     text-align: center;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+    margin-top: 10px;
 
     .info {
       display: flex;
       align-items: center;
 
       img {
-        border-radius: 100%;
-        margin-right: 20px;
+        border-radius: 90%;
+        height: 90px;
+        width: 100px;
+        margin-right: 10px;
+        margin-bottom: 10px;
       }
     }
   }
