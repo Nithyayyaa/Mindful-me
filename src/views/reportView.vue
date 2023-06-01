@@ -15,7 +15,7 @@
               :loop="false"
             >
             </lottie-vue-player>
-            <h6 style="text-align: center">
+            <h6 style="text-align: center; font-size: 10px">
               {{ maxEmotion(val) }} on {{ formatDate(val) }}
             </h6>
           </div>
@@ -150,26 +150,38 @@ main {
 }
 </style>
 <script>
+import { db } from "@/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+
 export default {
   data() {
     return {
-      trackData: [
-        { happy: 50, angry: 70, anxious: 70, neutral: 20, stamp: new Date() },
-        { happy: 20, angry: 20, anxious: 60, neutral: 80, stamp: new Date() },
-        { happy: 30, angry: 60, anxious: 20, neutral: 40, stamp: new Date() },
-        { happy: 60, angry: 40, anxious: 80, neutral: 80, stamp: new Date() },
-        { happy: 90, angry: 0, anxious: 70, neutral: 10, stamp: new Date() },
-        { happy: 0, angry: 10, anxious: 70, neutral: 10, stamp: new Date() },
-        { happy: 50, angry: 20, anxious: 50, neutral: 50, stamp: new Date() },
-      ],
+      userData: null,
+      trackData: [],
     };
+  },
+  beforeMount() {
+    const docRef = doc(db, "users", this.$store.state.user.uid);
+    getDoc(docRef).then((userData) => {
+      this.userData = userData.data();
+      this.trackData = userData.data().moods;
+    });
   },
   methods: {
     maxEmotion(input) {
-      let keys = Object.values(input);
-      keys.pop();
-      let max = Math.max(...keys);
-      return Object.keys(input).filter((el) => input[el] === max)[0];
+      let emotion = "";
+      Object.keys(input).reduce((prev, curr) => {
+        if (typeof input[curr] !== "object") {
+          let numVal = Number(input[curr]);
+          if (numVal > prev) {
+            emotion = curr;
+            return numVal;
+          } else {
+            return prev;
+          }
+        }
+      }, 0);
+      return emotion;
     },
     emotionToAnimation(emotion) {
       switch (emotion) {
@@ -184,7 +196,7 @@ export default {
       }
     },
     formatDate(val) {
-      let date = val.stamp;
+      let date = new Date(val.stamp.m);
       return `${date.getDate()}/${date.getMonth()}/${date.getYear()}`;
     },
   },

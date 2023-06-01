@@ -218,7 +218,6 @@ export default {
   beforeMount() {
     this.get_quote_of_the_day();
     axios.get("http://127.0.0.1:5000/doctors").then((resp) => {
-      console.log(resp);
       this.doctors = resp.data.doctors;
       let selectedDoctor = this.doctors[this.selectedDoctor];
       let doctorLocation = {

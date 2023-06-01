@@ -56,7 +56,13 @@
             />
             <h6>Automatically with photo</h6>
           </div>
-          <div class="modal1-option">
+          <div
+            class="modal1-option"
+            @click="
+              questionnaire = true;
+              active = false;
+            "
+          >
             <lottie-vue-player
               class="lottie"
               src="https://assets7.lottiefiles.com/packages/lf20_tpa51dr0.json"
@@ -129,6 +135,9 @@
           :format="() => 'Angry'"
         ></k-progress>
       </div>
+    </vs-dialog>
+    <vs-dialog overflow-hidden v-model="questionnaire">
+      <QuestionnaireComponent />
     </vs-dialog>
   </div>
 </template>
@@ -303,16 +312,21 @@
 <script>
 import axios from "axios";
 import { db } from "@/firebaseConfig";
-import { updateDoc, doc, arrayUnion } from "firebase/firestore";
+import { updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
+import QuestionnaireComponent from "@/components/questionnaireComponent.vue";
 
 export default {
   name: "HomeView",
+  components: {
+    QuestionnaireComponent,
+  },
   data() {
     return {
       active: false,
       image: false,
       srcObject: null,
       emotionData: null,
+      questionnaire: false,
     };
   },
   computed: {
@@ -346,12 +360,29 @@ export default {
               neutral: resp.data[0].emotion.neutral,
             };
             const docRef = doc(db, "users", this.$store.state.user.uid);
-            await updateDoc(docRef, {
-              moods: arrayUnion({
-                ...this.emotionData,
-                stamp: new Date(),
-              }),
-            });
+            const dbResp = await getDoc(docRef);
+            const dbData = dbResp.data();
+            const lastDate = new Date(dbData.moods.at(-1).stamp.m);
+            if (lastDate.getDate() === new Date().getDate()) {
+              let moods = dbData.moods;
+              moods.pop();
+              await updateDoc(docRef, {
+                moods: [
+                  ...moods,
+                  {
+                    ...this.emotionData,
+                    stamp: new Date(),
+                  },
+                ],
+              });
+            } else {
+              await updateDoc(docRef, {
+                moods: arrayUnion({
+                  ...this.emotionData,
+                  stamp: new Date(),
+                }),
+              });
+            }
           });
         stream.getTracks().forEach(function (track) {
           track.stop();

@@ -13,13 +13,15 @@ export default {
 
   created() {
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
-      this.$store.dispatch("login", {
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        uid: user.uid,
-      });
+      if (user !== undefined) {
+        this.$store.dispatch("login", {
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          uid: user.uid,
+        });
+        this.$router.push("/home");
+      }
     });
   },
 };
